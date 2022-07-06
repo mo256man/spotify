@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1>Spotify artist_top_tracks</h1>
+<br>
+<div class="box">
+<select name="select" id="inputbox">
+<option hidden>選択してください</option>>
+<option>YOASOBI</option>
+<option>SKE48</option>
+<option>安室奈美恵</option>
+<option>DREAMS COME TRUE</option>
+<option>B'z</option>
+<option>ピンク・レディー</option>
+<option>石原裕次郎</option>
+<option>ザ・ドリフターズ</option>
+</select>
+<input type="button" id="submit" value="送信" onclick="send_to_python()"><br>
+</div>
+<br>
+<div id="result"></div>
+<br>
+<table class="none">
+<tr class="none">
+<td class="none">
+    <table>
+        <tr><th>順位</th><th class="w200">タイトル</th><th>人気度</th>
+            <th class="w50">アコー</th><th class="w50">ダンス</th><th class="w50">エネ</th><th class="w50">イン</th>
+            <th class="w50">ライブ</th><th class="w50">スピー</th><th class="w50">バレ</th><th>プレビュー</th></tr>
+        {% for i in range(10) %}
+        <tr><td class="right">{{i+1}}位</td><td id="title{{i+1}}"></td><td class="right" id="popularity{{i+1}}"></td>
+            <td id="acousticness{{i+1}}"></td><td id="danceability{{i+1}}"></td><td id="energy{{i+1}}"></td><td id="instrumentalness{{i+1}}"></td>
+            <td id="liveness{{i+1}}"></td><td id="speechiness{{i+1}}"></td><td id="valence{{i+1}}"></td><td id="preview{{i+1}}"></td></tr>
+        {% endfor %}
+    </table>
+</td>
+<td class="image">
+    <img id="image" width="300" height="300">
+</td>
+</tr>
+</table>
+
+<script type="text/javascript">
+function send_to_python() {
+    var send_data = $("#inputbox").val();
+    $.ajax("/call_from_ajax", {
+        type: "post",
+        data: {"data": send_data},              // 連想配列をPOSTする
+    }).done(function(received_data) {           // 戻ってきたのはJSON（文字列）
+        var dict = JSON.parse(received_data);   // JSONを連想配列にする
+        // 以下、Javascriptで料理する
+        $("#image").attr("src", dict[1]["image"]);
+        for (i=1; i<=10; i++) {
+            $("#title" + i).html(dict[i]["name"]);
+            $("#popularity" + i).html(dict[i]["popularity"]);
+            $("#acousticness" + i).html(dict[i]["acousticness"]);
+            $("#danceability" + i).html(dict[i]["danceability"]);
+            $("#energy" + i).html(dict[i]["energy"]);
+            $("#instrumentalness" + i).html(dict[i]["instrumentalness"]);
+            $("#liveness" + i).html(dict[i]["liveness"]);
+            $("#speechiness" + i).html(dict[i]["speechiness"]);
+            $("#valence" + i).html(dict[i]["valence"]);
+            $("#preview" + i).html("<iframe src='" + dict[i]["preview_url"] + "'></iframe>");
+        }
+    }).fail(function() {
+        console.log("失敗");
+    });
+};
+
+function reset(){
+    //これは普通のJavaScript（jQuery）
+    $("#inputbox").val("");
+    $("#result").text("");
+};
+
+</script>
+</body>
+</html>

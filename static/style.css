@@ -1,0 +1,35 @@
+td.right {
+    text-align: right;
+}
+
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+table.none, th.none, td.none {
+    border: none;
+}
+
+
+th.w50, td.w50 {
+    width: 50px;
+}
+
+th.w200, td.w200 {
+    width: 200px;
+}
+
+.box select{
+    border: 1px solid;
+    font-size: 30px;
+}
+
+td.image {
+    vertical-align: top;
+    border: none;
+}
